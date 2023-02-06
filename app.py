@@ -1,5 +1,6 @@
 import uvicorn
 import gunicorn
+import xgboost
 from fastapi import FastAPI
 # from waterq import Water
 import numpy as np
