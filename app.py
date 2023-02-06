@@ -6,7 +6,7 @@ import numpy as np
 import pickle
 import pandas as Pd
 app=FastAPI()
-pickle_in=open('cls.pkl','rb')
+pickle_in=open('clsxgb.pkl','rb')
 classifier=pickle.load(pickle_in)
 
 @app.get('/')
