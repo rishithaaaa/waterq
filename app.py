@@ -1,22 +1,14 @@
 import uvicorn
 import gunicorn
-# import xgboost
 from fastapi import FastAPI
-# from waterq import Water
+from pydantic import BaseModel
 import numpy as np
 import pickle
-import pandas as Pd
+import pandas as pd
 app=FastAPI()
 pickle_in=open('clsxgb.pkl','rb')
 classifier=pickle.load(pickle_in)
 
-@app.get('/')
-def index():
-    return{'message': 'Welcome to water quality prediction API'}
-@app.get('/name')
-def get_name(name:str):
-    return{'message':f'Hello,{name}'}
-from pydantic import BaseModel
 class Water(BaseModel):
     ph:float
     Hardness:float
@@ -26,7 +18,14 @@ class Water(BaseModel):
     Conductivity:float
     Organic_carbon:float
     Trihalomethanes:float
-    Turbidity:float    
+    Turbidity:float
+
+@app.get('/')
+def index():
+    return{'message': 'Welcome to water quality prediction API'}
+@app.get('/name')
+def get_name(name:str):
+    return{'message':f'Hello,{name}'}    
 @app.post('/predict')
 def predict_water(data:Water):
     data=data.dict()
@@ -39,10 +38,10 @@ def predict_water(data:Water):
     Conductivity=data['Sulfate']
     Organic_carbon=data['Organic_carbon']
     Trihalomethanes=data['Trihalomethanes']
-    Turbidity=data['Turbidity']
-    #   print(classifier.predict([[ph,Hardness,Solids,Chloramines,Sulfate,Conductivity,Organic_carbon,Trihalomethanes,Turbidity]]))
-    prediction=classifier.predict([[ph,Hardness,Solids,Chloramines,Sulfate,Conductivity,Organic_carbon,Trihalomethanes,Turbidity]])
-    # print(prediction)
+    Turbidity=data['Turbidity']zz
+    values = [[ph,Hardness,Solids,Chloramines,Sulfate,Conductivity,Organic_carbon,Trihalomethanes,Turbidity]]
+    df = pd.DataFrame(values, columns=["ph","Hardness","Solids","Chloramines","Sulfate","Conductivity","Organic_carbon","Trihalomethanes","Turbidity"])
+    prediction=classifier.predict(df)
     if(prediction[0]>0.5):
         prediction="Good water"
     else:
@@ -50,6 +49,6 @@ def predict_water(data:Water):
     return{
         'prediction':prediction
     }
-    # if __name__=='__main__':
+    # if _name=='main_':
     #     uvicorn.run(app,host='126.0.0.1',port=8000)
 #uvicorn app:app --reload
