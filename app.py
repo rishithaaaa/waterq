@@ -6,8 +6,23 @@ import numpy as np
 import pickle
 import pandas as pd
 app=FastAPI()
-pickle_in=open('clsxgb.pkl','rb')
-classifier=pickle.load(pickle_in)
+pickle_in1=open('clsxgb.pkl','rb')
+classifier1=pickle.load(pickle_in1)
+
+pickle_in2=open('clsrf.pkl','rb')
+classifier2=pickle.load(pickle_in2)
+
+pickle_in3=open('clslr.pkl','rb')
+classifier3=pickle.load(pickle_in3)
+
+def predicts(df,num):
+    if num==1:
+        return classifier1.predict(df)
+    if num==2:    
+        return classifier2.predict(df)
+    if num==3:
+       return classifier3.predict(df)  
+    
 
 class Water(BaseModel):
     ph:float
@@ -27,7 +42,9 @@ def index():
 def get_name(name:str):
     return{'message':f'Hello,{name}'}    
 @app.post('/predict')
-def predict_water(data:Water):
+# def get_model(model: int):
+#     return model
+def predict_water(data:Water,model:int):
     data=data.dict()
     print(data)
     ph=data['ph']
@@ -41,14 +58,16 @@ def predict_water(data:Water):
     Turbidity=data['Turbidity']
     values = [[ph,Hardness,Solids,Chloramines,Sulfate,Conductivity,Organic_carbon,Trihalomethanes,Turbidity]]
     df = pd.DataFrame(values, columns=["ph","Hardness","Solids","Chloramines","Sulfate","Conductivity","Organic_carbon","Trihalomethanes","Turbidity"])
-    prediction=classifier.predict(df)
+    # prediction=classifier.predict(df)
+    prediction=predicts(df,model)
     if(prediction[0]>0.5):
-        prediction="Good water"
+        prediction="Safe to drink"
     else:
-        prediction="Bad water"
+        prediction="Unsafe to drink"
     return{
         'prediction':prediction
     }
     # if _name=='main_':
     #     uvicorn.run(app,host='126.0.0.1',port=8000)
 #uvicorn app:app --reload
+
