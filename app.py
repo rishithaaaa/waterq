@@ -38,7 +38,7 @@ def predict_water(data:Water):
     Conductivity=data['Sulfate']
     Organic_carbon=data['Organic_carbon']
     Trihalomethanes=data['Trihalomethanes']
-    Turbidity=data['Turbidity']zz
+    Turbidity=data['Turbidity']
     values = [[ph,Hardness,Solids,Chloramines,Sulfate,Conductivity,Organic_carbon,Trihalomethanes,Turbidity]]
     df = pd.DataFrame(values, columns=["ph","Hardness","Solids","Chloramines","Sulfate","Conductivity","Organic_carbon","Trihalomethanes","Turbidity"])
     prediction=classifier.predict(df)
